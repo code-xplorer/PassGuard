@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="PassGuard_AlertDialog" parent="MaterialAlertDialog.Material3">
+        <item name="colorPrimary">@color/colorControlTint</item>
+        <item name="backgroundInsetStart">0dp</item>
+        <item name="backgroundInsetEnd">0dp</item>
+        <item name="android:layout_margin">0dp</item>
+    </style>
+</resources>

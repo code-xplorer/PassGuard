@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/splash_screen_icon" android:width="160dp" android:height="160dp" android:top="16dp" android:bottom="16dp" android:start="50dp" android:end="50dp"/>
+</layer-list>

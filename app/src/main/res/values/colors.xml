@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#0053CF</color>
+    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorPrimaryLight">#660053CF</color>
+    <color name="colorPrimaryTransparent">#400053CF</color>
+    <color name="colorPrimaryLighter">#F1F6FB</color>
+    <color name="colorSecondary">#FFBC3A</color>
+    <color name="colorSecondaryLight">#FDE4B4</color>
+    <color name="colorTertiary">#0053CF</color>
+    <color name="colorSurface">#FFFFFFFF</color>
+    <color name="colorSurfaceDark">#FFEFEFEF</color>
+    <color name="colorOnSurface">#111111</color>
+    <color name="colorControlTint">@color/colorPrimary</color>
+    <color name="colorOnSurfaceLight">#777777</color>
+    <color name="colorAvatarBackground">#EBF3FF</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="lightGrey">#FFF0F0F0</color>
+    <color name="midGrey">#FFE0E0E0</color>
+    <color name="grey">#919191</color>
+    <color name="transparentGrey">#80C0C0C0</color>
+    <color name="colorOutline">#0053CF</color>
+    <color name="colorLockScreen">#FFFFFF</color>
+</resources>
