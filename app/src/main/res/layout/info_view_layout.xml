@@ -2,9 +2,9 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:parentTag="com.google.android.material.card.MaterialCardView"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    tools:parentTag="com.google.android.material.card.MaterialCardView">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -34,10 +34,23 @@
             android:textColor="@color/colorOnSurface"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/info_eye"
+            app:layout_constraintEnd_toStartOf="@+id/copy_icon"
             app:layout_constraintStart_toStartOf="@+id/info_label"
             app:layout_constraintTop_toBottomOf="@+id/info_label"
             tools:text="Amazon" />
+
+        <ImageView
+            android:id="@+id/copy_icon"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="8dp"
+            android:padding="6dp"
+            android:contentDescription="@string/copy_to_clipboard"
+            app:layout_constraintBottom_toBottomOf="@id/info_text"
+            app:layout_constraintEnd_toStartOf="@id/info_eye"
+            app:layout_constraintTop_toTopOf="@id/info_text"
+            app:srcCompat="@drawable/baseline_content_copy_24"
+            app:tint="@color/colorOnSurface" />
 
         <ImageView
             android:id="@+id/info_eye"
@@ -45,12 +58,12 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
             android:contentDescription="@string/visibility"
-            app:tint="@color/colorOnSurface"
             android:minWidth="0dp"
             android:minHeight="0dp"
             app:layout_constraintBottom_toBottomOf="@+id/info_text"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/info_text" />
+            app:layout_constraintTop_toTopOf="@+id/info_text"
+            app:tint="@color/colorOnSurface" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </merge>

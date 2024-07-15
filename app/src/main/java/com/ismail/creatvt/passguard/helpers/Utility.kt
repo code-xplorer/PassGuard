@@ -12,6 +12,8 @@ import android.util.TypedValue
 import android.widget.Toast
 import androidx.biometric.BiometricManager
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import com.ismail.creatvt.passguard.PassGuardApplication
 import com.ismail.creatvt.passguard.manager.password.PasswordManager
 
@@ -63,4 +65,18 @@ fun getEnrollIntent() = when {
 
     Build.VERSION.SDK_INT >= P -> Intent(Settings.ACTION_FINGERPRINT_ENROLL)
     else -> Intent(Settings.ACTION_SECURITY_SETTINGS)
+}
+
+fun <T, U, V> LiveData<T>.merge(other:LiveData<U>, transform:(T?, U?) -> V?):LiveData<V> {
+    val data = MediatorLiveData<V>()
+
+    data.addSource(this) {
+        data.value = transform(it, other.value)
+    }
+
+    data.addSource(other) {
+        data.value = transform(value, it)
+    }
+
+    return data
 }

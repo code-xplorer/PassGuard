@@ -11,7 +11,6 @@ import androidx.security.crypto.MasterKey
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.ismail.creatvt.passguard.helpers.getPasswordKey
-import com.ismail.creatvt.passguard.helpers.toArrayList
 import com.ismail.creatvt.passguard.model.Password
 
 class PasswordManagerImpl internal constructor(val context: Context) : PasswordManager {
@@ -90,7 +89,7 @@ class PasswordManagerImpl internal constructor(val context: Context) : PasswordM
                 .putString(getPasswordKey(it), Gson().toJson(part))
                 .apply()
         }
-        _passwords.value = getAllPasswords()
+        _passwords.postValue(getAllPasswords())
     }
 
     override fun clearPasswords() {

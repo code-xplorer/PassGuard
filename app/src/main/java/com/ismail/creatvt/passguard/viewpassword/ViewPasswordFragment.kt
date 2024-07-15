@@ -46,6 +46,7 @@ class ViewPasswordFragment : BottomSheetDialogFragment(), ViewPasswordViewModel.
         launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             showAuthenticationDialog()
         }
+        binding?.owner = viewLifecycleOwner
         val viewModel = ViewModelProvider(this)[ViewPasswordViewModel::class.java]
         viewModel.password = password
         viewModel.viewContract = this

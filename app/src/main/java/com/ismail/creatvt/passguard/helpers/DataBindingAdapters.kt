@@ -1,11 +1,21 @@
 package com.ismail.creatvt.passguard.helpers
 
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.res.ColorStateList
+import android.content.res.Resources
+import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View.OnClickListener
+import android.view.inputmethod.InputMethodManager
+import android.view.inputmethod.InputMethodManager.SHOW_FORCED
+import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import android.widget.AutoCompleteTextView
+import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.setPadding
 import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
@@ -74,6 +84,42 @@ fun ImageView.setWebsiteIcon(website: Website) {
             setBounds(0, 0, intrinsicWidth, intrinsicHeight)
         }
         setImageDrawable(drawable)
+    }
+}
+
+private fun ImageView.setAndStartAnimation(animation:AnimatedVectorDrawable) {
+    setImageDrawable(animation)
+    animation.start()
+}
+
+@BindingAdapter("forwardAnimation", "backwardAnimation", "android:onClick", requireAll = false)
+fun ImageView.setAnimatedIconSwitch(forward:Drawable?, backward:Drawable?, onClickListener: OnClickListener?) {
+    val forwardAnimation = forward as? AnimatedVectorDrawable
+    val backwardAnimation = backward as? AnimatedVectorDrawable
+
+    if(forwardAnimation == null || backwardAnimation == null) return
+
+    setOnClickListener {
+        if(tag == null || tag == "Forward") {
+            setAndStartAnimation(forwardAnimation)
+            tag = "Backward"
+        } else {
+            setAndStartAnimation(backwardAnimation)
+            tag = "Forward"
+        }
+        onClickListener?.onClick(it)
+    }
+}
+
+@BindingAdapter("keyboardEnabled")
+fun EditText.setKeyboardEnabled(isKeyboardEnabled:Boolean) {
+    val inputMethodManager = context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+
+    if(isKeyboardEnabled) {
+        inputMethodManager.showSoftInput(this, SHOW_IMPLICIT)
+    } else {
+        setText("")
+        inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
     }
 }
 

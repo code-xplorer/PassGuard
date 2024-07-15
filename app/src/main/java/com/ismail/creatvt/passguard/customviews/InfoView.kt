@@ -1,6 +1,9 @@
 package com.ismail.creatvt.passguard.customviews
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
+import android.content.Context.CLIPBOARD_SERVICE
 import android.text.method.PasswordTransformationMethod
 import android.util.AttributeSet
 import android.view.View
@@ -40,6 +43,7 @@ class InfoView @JvmOverloads constructor(
     private val labelView: TextView
     private val textView: TextView
     private val eyeImage: ImageView
+    private val copyImage: ImageView
 
     private var listener: TextVisibilityListener? = null
     private var isTextVisible = true
@@ -50,9 +54,18 @@ class InfoView @JvmOverloads constructor(
         labelView = findViewById(R.id.info_label)
         textView = findViewById(R.id.info_text)
         eyeImage = findViewById(R.id.info_eye)
+        copyImage = findViewById(R.id.copy_icon)
 
         eyeImage.setOnClickListener {
             listener?.onVisibilityRequest(!isTextVisible)
+        }
+
+        copyImage.setOnClickListener {
+            if(!isTextVisible) return@setOnClickListener
+            val labelContent = labelView.text.toString()
+            val textContent = textView.text.toString()
+            (context.getSystemService(CLIPBOARD_SERVICE) as? ClipboardManager)
+                ?.setPrimaryClip(ClipData.newPlainText(labelContent, textContent))
         }
     }
 
@@ -86,6 +99,7 @@ class InfoView @JvmOverloads constructor(
         eyeImage.setImageResource(
             if (visible) R.drawable.eye_masked else R.drawable.eye_visible
         )
+        copyImage.visibility = if(visible) View.VISIBLE else View.GONE
 
         textView.transformationMethod = if (visible) {
             null

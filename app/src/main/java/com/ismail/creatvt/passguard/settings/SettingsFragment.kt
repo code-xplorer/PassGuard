@@ -8,6 +8,8 @@ import android.content.ClipboardManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
@@ -38,7 +40,10 @@ import com.ismail.creatvt.passguard.helpers.getEnrollIntent
 import com.ismail.creatvt.passguard.helpers.passwordManager
 import com.ismail.creatvt.passguard.helpers.showToast
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -87,7 +92,7 @@ class SettingsFragment : BottomSheetDialogFragment(), SettingsViewModel.ViewCont
 
         importLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                if(it.resultCode == RESULT_OK) {
+                if (it.resultCode == RESULT_OK) {
                     Log.d("ContentChooserLogTag", "URI: ${it.data?.data}")
                     val uri = it.data?.data
                     if (uri != null) {
@@ -98,7 +103,7 @@ class SettingsFragment : BottomSheetDialogFragment(), SettingsViewModel.ViewCont
 
         exportLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                if(it.resultCode == RESULT_OK) {
+                if (it.resultCode == RESULT_OK) {
                     Log.d("ContentChooserLogTag", "URI: ${it.data?.data}")
                     val uri = it.data?.data
                     if (uri != null) {
@@ -126,43 +131,55 @@ class SettingsFragment : BottomSheetDialogFragment(), SettingsViewModel.ViewCont
             findViewById<ImageView>(R.id.closeButton).setOnClickListener { dismiss() }
             findViewById<Button>(R.id.importButton).setOnClickListener {
                 val text = pinView.text.toString()
-                if(text.length != 8) {
+                if (text.length != 8) {
                     showToast(R.string.enter_complete_key)
                     return@setOnClickListener
                 }
-                importPasswords(uri, text, this::dismiss)
+                lifecycleScope.launch(IO) {
+                    importPasswords(uri, text, this@SettingsFragment::dismiss)
+                }
             }
             show()
         }
     }
 
-    private fun importPasswords(uri: Uri, passwordKey: String, dismiss: ()->Unit) {
-        requireActivity().contentResolver.openInputStream(uri)?.use {ips ->
-            val data = StringBuilder()
-            while(true) {
-                val byte = ips.read()
-                if(byte == -1) {
-                    break
+    private suspend fun importPasswords(uri: Uri, passwordKey: String, dismiss: () -> Unit) =
+        coroutineScope {
+            launch(IO) {
+                requireActivity().contentResolver.openInputStream(uri)?.use { ips ->
+                    val data = StringBuilder()
+                    while (true) {
+                        val byte = ips.read()
+                        if (byte == -1) {
+                            break
+                        }
+                        data.append(byte.toChar())
+                    }
+                    val passwords = AESHelper.decrypt(data.toString(), passwordKey)
+                    if (passwords == null) {
+                        launch(Main) {
+                            showToast(R.string.unable_to_import)
+                        }
+                        return@use
+                    }
+                    try {
+                        passwordManager.import(passwords)
+                    } catch (e: Exception) {
+                        Log.d("PassguardLogs", "Exception while importing password: ${e.message}")
+                        launch(Main) {
+                            showToast(R.string.unable_to_import)
+                        }
+                        return@use
+                    }
+                    launch(Main) {
+                        showToast(R.string.imported)
+                    }
+                    dismiss()
                 }
-                data.append(byte.toChar())
             }
-            val passwords = AESHelper.decrypt(data.toString(), passwordKey)
-            if(passwords == null) {
-                showToast(R.string.unable_to_import)
-                return@use
-            }
-            try {
-                passwordManager.import(passwords)
-            } catch (e: Exception) {
-                showToast(R.string.unable_to_import)
-                return@use
-            }
-            showToast(R.string.imported)
-            dismiss()
         }
-    }
 
-    private fun writeDataToEncryptedFileAndShowPasswordDialog(uri:Uri) {
+    private fun writeDataToEncryptedFileAndShowPasswordDialog(uri: Uri) {
         Log.d("ContentChooserLogTag", "Writing encrypted data to file...")
         val passwordKey = UUID.randomUUID().toString().substring(0, 8)
         val encryptedPasswords =
@@ -209,7 +226,7 @@ class SettingsFragment : BottomSheetDialogFragment(), SettingsViewModel.ViewCont
             }
         } else {
             val passwords = passwordManager.getAllPasswords()
-            if(passwords.isEmpty()) {
+            if (passwords.isEmpty()) {
                 showToast(R.string.no_passwords_to_export)
                 return
             }
@@ -227,6 +244,7 @@ class SettingsFragment : BottomSheetDialogFragment(), SettingsViewModel.ViewCont
         super.onResume()
         app.isDocumentAppLaunched = false
     }
+
     override fun showDeleteConfirmation() {
         Dialog(requireContext()).apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)

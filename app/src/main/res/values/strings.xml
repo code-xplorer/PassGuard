@@ -50,4 +50,5 @@
     <string name="delete_confirmation_checkbox">I truly want to clear out my password list</string>
     <string name="no_passwords">No Passwords</string>
     <string name="no_passwords_message">Hey! Looks like you haven\'t added any passwords yet. Click on the + icon below to start adding.</string>
+    <string name="search">Search</string>
 </resources>
