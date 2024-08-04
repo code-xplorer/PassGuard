@@ -116,9 +116,11 @@ fun EditText.setKeyboardEnabled(isKeyboardEnabled:Boolean) {
     val inputMethodManager = context.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
 
     if(isKeyboardEnabled) {
+        requestFocus()
         inputMethodManager.showSoftInput(this, SHOW_IMPLICIT)
     } else {
         setText("")
+        clearFocus()
         inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
     }
 }
